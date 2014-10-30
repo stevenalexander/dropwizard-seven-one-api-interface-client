@@ -2,6 +2,7 @@ package com.example.resources;
 
 import com.example.core.User;
 import com.example.core.UserTests;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.GenericType;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.ClassRule;
@@ -9,6 +10,7 @@ import org.junit.Test;
 
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,14 +33,20 @@ public class UserResourceTests {
 
     @Test
     public void getAll() throws Exception {
-        List<User> users = resources.client().resource("/user").get(new GenericType<List<User>>() {});
+        ClientResponse response = resources.client().resource("/user").get(ClientResponse.class);
+
+        assertEquals(200, response.getStatus());
+        List<User> users = response.getEntity(new GenericType<List<User>>(){});
         assertEquals(2, users.size());
         assertEquals("user1", users.get(0).getUsername());
     }
 
     @Test
     public void get() throws Exception {
-        User user = resources.client().resource("/user/test1").get(User.class);
+        ClientResponse response = resources.client().resource("/user/test1").get(ClientResponse.class);
+
+        assertEquals(200, response.getStatus());
+        User user = response.getEntity(User.class);
         assertEquals("test1", user.getUsername());
     }
 
@@ -46,10 +54,12 @@ public class UserResourceTests {
     public void update() throws Exception {
         User user = UserTests.getUser();
 
-        User updatedUser = resources.client().resource("/user/test1")
+        ClientResponse response = resources.client().resource("/user/test1")
                 .type(MediaType.APPLICATION_JSON)
-                .put(User.class, user);
+                .put(ClientResponse.class, user);
 
+        assertEquals(200, response.getStatus());
+        User updatedUser = response.getEntity(User.class);
         assertEquals(user, updatedUser);
     }
 
@@ -57,19 +67,21 @@ public class UserResourceTests {
     public void update_invalid_user() throws Exception {
         User user = UserTests.getUser().setDisplayName("");
 
-        User updatedUser = resources.client().resource("/user/test1")
+        ClientResponse response = resources.client().resource("/user/test1")
                 .type(MediaType.APPLICATION_JSON)
-                .put(User.class, user);
+                .put(ClientResponse.class, user);
     }
 
     @Test()
     public void add() throws Exception {
         User newUser = UserTests.getUser();
 
-        User user = resources.client().resource("/user")
+        ClientResponse response = resources.client().resource("/user")
                 .type(MediaType.APPLICATION_JSON)
-                .post(User.class, newUser);
+                .post(ClientResponse.class, newUser);
 
+        assertEquals(201, response.getStatus());
+        User user = response.getEntity(User.class);
         assertEquals(newUser, user);
     }
 
@@ -77,13 +89,16 @@ public class UserResourceTests {
     public void add_invalid_user() throws Exception {
         User newUser = UserTests.getUser().setUsername(null);
 
-        User user = resources.client().resource("/user")
+        ClientResponse response = resources.client().resource("/user")
                 .type(MediaType.APPLICATION_JSON)
-                .post(User.class, newUser);
+                .post(ClientResponse.class, newUser);
     }
 
     @Test()
     public void delete() throws Exception {
-        resources.client().resource("/user/test1").delete();
+        ClientResponse response = resources.client().resource("/user/test1")
+                .delete(ClientResponse.class);
+
+        assertEquals(204, response.getStatus());
     }
 }

@@ -5,6 +5,8 @@ import com.example.core.User;
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 public class UserResource {
 
     @GET
-    public List<User> getAll(){
+    public Response getAll(){
 
         List<User> users = new LinkedList<>();
         users.add(
@@ -30,31 +32,34 @@ public class UserResource {
                 .setDisplayRole("DBA")
         );
 
-        return users;
+        return Response.ok().entity(users).build();
     }
 
     @GET
     @Path("/{username}")
-    public User get(@PathParam("username") String username){
-        return new User()
-            .setUsername(username)
-            .setDisplayName(username)
-            .setDisplayRole("DBA");
+    public Response get(@PathParam("username") String username){
+        return Response.ok().entity(
+                new User()
+                    .setUsername(username)
+                    .setDisplayName(username)
+                    .setDisplayRole("DBA"))
+                .build();
     }
 
     @POST
-    public User add(@Valid User user) {
-        return user;
+    public Response add(@Valid User user) {
+        return Response.created(URI.create("/user/1234")).entity(user).build();
     }
 
     @PUT
     @Path("/{username}")
-    public User update(@PathParam("username") String username, @Valid User user) {
-        return user;
+    public Response update(@PathParam("username") String username, @Valid User user) {
+        return Response.ok().entity(user).build();
     }
 
     @DELETE
     @Path("/{username}")
-    public void delete(@PathParam("username") String username) {
+    public Response delete(@PathParam("username") String username) {
+        return Response.noContent().build();
     }
 }
