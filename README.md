@@ -1,3 +1,3 @@
 # Dropwizard 7.1 Response interface
 
-Test project to try and use an interface which defines the response objects for use in a client without losing the ability to return using Response style results in the Resource methods, as these work nicely with attributes like hibernates @unitofwork, which doesn't like WebApplicationException.
+Test project to use gradle to build a dropwizard project split into api, application and client sub-projects so the representation classes held in api can be shared between application and client or any other project using the dropwizard application.
