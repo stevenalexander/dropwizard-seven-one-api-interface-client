@@ -1,0 +1,23 @@
+apply plugin: 'gradle-one-jar'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.github.rholder:gradle-one-jar:1.0.3'
+    }
+}
+
+dependencies {
+    compile project(':api')
+    testCompile 'com.sun.jersey:jersey-client:1.18.1', 'com.sun.jersey.jersey-test-framework:jersey-test-framework-core:1.18.1'
+}
+
+task oneJar(type: OneJar) {
+    mainClass = 'com.example.application.ExampleApplication'
+}
+
+artifacts {
+    oneJar
+}
