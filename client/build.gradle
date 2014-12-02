@@ -1,0 +1,3 @@
+dependencies {
+    compile project(':api'), 'com.sun.jersey:jersey-client:1.18.1'
+}
